@@ -1,25 +1,28 @@
-FROM nvcr.io/nvidia/l4t-base:r32.7.1
+#FROM nvcr.io/nvidia/l4t-base:r32.7.1
+FROM dustynv/l4t-pytorch:r36.3.0-cu124
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
       git \
-      python3.8 python3.8-dev python3-pip \
+      python3 python3-dev python3-pip \
       libopenmpi-dev libomp-dev libopenblas-dev libblas-dev libeigen3-dev
 
-RUN python3.8 -m pip install --upgrade pip
-RUN python3.8 -m pip install setuptools gdown
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install setuptools gdown
+
+# Torch included in baseline image
 
 # pytorch 1.11.0
-RUN gdown https://drive.google.com/uc?id=1hs9HM0XJ2LPFghcn7ZMOs5qu5HexPXwM
-RUN python3.8 -m pip install torch-*.whl
+#RUN gdown https://drive.google.com/uc?id=1hs9HM0XJ2LPFghcn7ZMOs5qu5HexPXwM
+#RUN python3.8 -m pip install torch-*.whl
 
 # torchvision 0.12.0
-RUN gdown https://drive.google.com/uc?id=1m0d8ruUY8RvCP9eVjZw4Nc8LAwM8yuGV
-RUN python3.8 -m pip install torchvision-*.whl
+#RUN gdown https://drive.google.com/uc?id=1m0d8ruUY8RvCP9eVjZw4Nc8LAwM8yuGV
+#RUN python3.8 -m pip install torchvision-*.whl
 
-RUN git clone https://github.com/ultralytics/yolov5.git
-WORKDIR yolov5
-RUN python3.8 -m pip install -r requirements.txt
+RUN git clone https://github.com/ultralytics/yolov5.git /yolov5
+WORKDIR /yolov5
+RUN python3 -m pip install -r requirements.txt
 COPY is_docker.patch .
 RUN patch -p1 < is_docker.patch
